@@ -115,7 +115,7 @@ const SudokuGame = () => {
             </table>
 
             {/* Number Buttons */}
-            <div style={{ marginTop: "20px" }}>
+            <div className="button-container">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
                     <button
                         key={number}

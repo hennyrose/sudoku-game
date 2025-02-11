@@ -91,3 +91,11 @@ button#regenerate {
 button#regenerate:hover {
   background-color: #218838;
 }
+.button-container {
+  text-align: center; /* Центрує кнопки */
+  margin-top: 20px; /* Відступ зверху */
+}
+
+.button-container button {
+  margin: 5px; /* Відступи між кнопками */
+}

@@ -10,6 +10,6 @@ function App() {
   );
 }
 
-const API_BASE = "https://sudoku-larose8.herokuapp.com/api";
+const API_BASE = "http://localhost:8080/api";
 
 export default App;

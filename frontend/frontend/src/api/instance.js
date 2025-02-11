@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL // Автоматично визначається залежно від середовища
+    baseURL: "http://localhost:8080/api" // Локальний сервер backend
 });
 
 export default api;
