@@ -2,75 +2,89 @@ import React, { useState, useEffect } from "react";
 import api from "./api/instance";
 
 const SudokuGame = () => {
-    const [board, setBoard] = useState([]); // Current puzzle board state
-    const [selectedCell, setSelectedCell] = useState(null); // Track active cell
-    const [completed, setCompleted] = useState(false); // Check if the puzzle is solved
+    const [board, setBoard] = useState([]);                // Поточна дошка Sudoku
+    const [selectedCell, setSelectedCell] = useState(null); // Координати обраної клітинки
+    const [completed, setCompleted] = useState(false);       // Позначка, що судоку вирішено
 
-    // Fetch the Sudoku puzzle from the backend
+    // Завантаження нової дошки з бекенду
     const fetchSudoku = () => {
         api.get("/games/new")
             .then((response) => {
-                setBoard(response.data); // Initialize the board with the puzzle
-                setSelectedCell(null); // Reset selected cell
-                setCompleted(false); // Mark as not completed
+                setBoard(response.data);
+                setSelectedCell(null);
+                setCompleted(false);
             })
             .catch((error) => console.error(error));
     };
 
     useEffect(() => {
-        fetchSudoku(); // Fetch a new puzzle when the component is mounted
+        fetchSudoku();
     }, []);
 
-    // Check if the puzzle is fully solved
+    // Перевірка, чи всі клітинки заповнено (проста перевірка для демо)
     const isSolved = (currentBoard) => {
-        return currentBoard.flat().every((cell) => cell !== 0); // Check if all cells are filled
+        return currentBoard.flat().every((cell) => cell !== 0);
     };
 
-    // Handle clicking on a cell (set it as active)
+    // Обробник кліку на клітинку (записуємо координати, якщо вона порожня)
     const handleCellClick = (row, col) => {
-        if (board[row][col] === 0) {
-            setSelectedCell({ row, col }); // Set the clicked empty cell as selected
-        }
+        // Якщо обрана клітинка вже містить число (тобто не 0) — ігноруємо
+        if (board[row][col] !== 0) return;
+
+        // Встановлюємо нову вибрану клітинку
+        setSelectedCell({ row, col });
     };
 
-    // Handle clicking a number (validate and place it into the selected cell)
+    // Обробник кліку на число (перевіряє й підставляє правильне)
     const handleNumberClick = (number) => {
         if (selectedCell) {
-            const { row, col } = selectedCell; // Get the selected cell's coordinates
+            const { row, col } = selectedCell;
+            const updatedBoard = [...board];
 
-            api.post("/games/check", { row, col, value: number }) // Validate the number from the backend
+            // Попередньо встановимо обране число
+            updatedBoard[row][col] = number;
+
+            // Надсилаємо запит для перевірки числа
+            api.post("/games/check", { row, col, value: number })
                 .then((response) => {
                     const isCorrect = response.data;
-
-                    const updatedBoard = [...board];
-                    updatedBoard[row][col] = number; // Temporarily set cell value regardless
-
                     if (isCorrect) {
-                        setBoard(updatedBoard); // Update the board with the correct value
-                        setSelectedCell(null); // Deselect the cell
+                        // Якщо число вірне, лишаємо його
+                        setBoard(updatedBoard);
+                        // Знімаємо виділення
+                        setSelectedCell(null);
 
-                        // Check if the puzzle is solved
+                        // Перевіряємо, чи розв’язано всю дошку
                         if (isSolved(updatedBoard)) {
                             setCompleted(true);
                         }
                     } else {
-                        // Temporarily mark the cell as incorrect with a CSS class
-                        document.getElementById(`cell-${row}-${col}`).classList.add("incorrect");
-                        setTimeout(() => {
-                            document.getElementById(`cell-${row}-${col}`).classList.remove("incorrect");
-                        }, 1000); // Remove the "incorrect" style after 1 second
+                        // Якщо число невірне — повертаємо клітинку в стан 0 (порожня)
+                        updatedBoard[row][col] = 0;
+                        setBoard(updatedBoard);
+
+                        // Відображаємо короткочасну підсвітку "incorrect"
+                        const cellEl = document.getElementById(`cell-${row}-${col}`);
+                        if (cellEl) {
+                            cellEl.classList.add("incorrect");
+                            setTimeout(() => {
+                                cellEl.classList.remove("incorrect");
+                            }, 1000);
+                        }
+                        // Знімаємо виділення
+                        setSelectedCell(null);
                     }
                 })
                 .catch((error) => console.error(error));
         }
     };
 
-    // Handle regenerating a new puzzle
+    // Оновлення/створення нової дошки
     const handleRegenerate = () => {
-        fetchSudoku(); // Fetch a new puzzle
+        fetchSudoku();
     };
 
-    // If the puzzle is completed, show a "Congratulations" message and regenerate button
+    // Якщо судоку вирішено, відображаємо повідомлення і кнопку перегенерації
     if (completed) {
         return (
             <div>
@@ -80,51 +94,54 @@ const SudokuGame = () => {
         );
     }
 
+    // Інакше відображаємо Sudoku-дошку й панель з числами для введення
     return (
         <div>
             <h1>Sudoku Game</h1>
 
-            {/* Sudoku Grid */}
             <table>
                 <tbody>
                 {board.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                        {row.map((cell, colIndex) => (
-                            <td
-                                key={colIndex}
-                                id={`cell-${rowIndex}-${colIndex}`}
-                                className={cell === 0 ? "empty-cell" : "filled-cell"}
-                                onClick={() => handleCellClick(rowIndex, colIndex)}
-                                style={{
-                                    backgroundColor:
-                                        selectedCell?.row === rowIndex && selectedCell?.col === colIndex
-                                            ? "lightblue"
-                                            : "white",
-                                }}
-                            >
-                                {cell !== 0 ? (
-                                    <span>{cell}</span> // Show the value if it's not empty
-                                ) : (
-                                    "" // For empty cells, no text shown
-                                )}
-                            </td>
-                        ))}
+                        {row.map((cell, colIndex) => {
+                            // Динамічне призначення класу для виділення клітинки
+                            const cellClass = [
+                                cell === 0 ? "empty-cell" : "filled-cell",
+                                selectedCell &&
+                                selectedCell.row === rowIndex &&
+                                selectedCell.col === colIndex
+                                    ? "selected-cell"
+                                    : ""
+                            ].join(" ");
+
+                            return (
+                                <td
+                                    key={colIndex}
+                                    id={`cell-${rowIndex}-${colIndex}`}
+                                    className={cellClass}
+                                    onClick={() => handleCellClick(rowIndex, colIndex)}
+                                >
+                                    {cell !== 0 ? cell : ""}
+                                </td>
+                            );
+                        })}
                     </tr>
                 ))}
                 </tbody>
             </table>
 
-            {/* Number Buttons */}
             <div className="button-container">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-                    <button
-                        key={number}
-                        onClick={() => handleNumberClick(number)}
-                        disabled={!selectedCell} // Disable buttons until a cell is selected
-                    >
-                        {number}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                    <button key={num} onClick={() => handleNumberClick(num)}>
+                        {num}
                     </button>
                 ))}
+            </div>
+
+            <div className="button-container">
+                <button id="regenerate" onClick={handleRegenerate}>
+                    Generate New Board
+                </button>
             </div>
         </div>
     );

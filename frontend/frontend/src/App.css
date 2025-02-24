@@ -1,7 +1,8 @@
-/* General Table Styling */
+/* Загальні стилі таблиці */
 table {
   border-collapse: collapse;
-  margin: 20px auto; /* Center align the table */
+  margin: 20px auto; /* Центрування таблиці */
+  border: 3px solid black; /* Товста рамка довкола всієї таблиці */
 }
 
 td {
@@ -10,52 +11,62 @@ td {
   border: 1px solid black;
   text-align: center;
   font-size: 22px;
-  cursor: pointer; /* Show pointer on hover for clickable cells */
+  cursor: pointer; /* Вказівник при наведенні */
+  transition: background-color 0.3s ease; /* Плавний перехід кольору */
 }
 
+/* Товсті лінії між групами з 3 рядків */
+table tr:nth-child(3n) td {
+  border-bottom: 3px solid black;
+}
+
+/* Товсті лінії між групами з 3 стовпців */
+table td:nth-child(3n) {
+  border-right: 3px solid black;
+}
+
+/* Стиль для порожніх клітинок */
 td.empty-cell {
-  background-color: #f9f9f9; /* Light gray for empty cells */
+  background-color: #f9f9f9; /* Світло-сірий колір для порожніх клітинок */
 }
 
+/* Стиль для вже заповнених клітинок */
 td.filled-cell {
-  background-color: #ddd; /* Darker gray for pre-filled cells */
-  font-weight: bold; /* Bold numbers */
+  background-color: #ddd; /* Темніший сірий */
+  font-weight: bold;
   color: black;
 }
 
+/* Підсвічування клітинки при наведенні */
 td:hover {
-  background-color: #e0e0e0; /* Slight hover effect for all cells */
+  background-color: #e0e0e0;
 }
 
-/* Selected Cell Styling */
-td {
-  transition: background-color 0.3s ease; /* Smooth color transitions */
-}
-
+/* Виділена клітинка */
 td.selected-cell {
-  background-color: lightblue !important; /* Highlight selected cell */
+  background-color: lightblue !important;
 }
 
-/* Incorrect Input Highlight */
+/* Помилка вводу */
 .incorrect {
-  background-color: red !important; /* Bright red for incorrect inputs */
-  color: white !important; /* White text for better visibility */
-  border: 2px solid darkred; /* Strong border to indicate error */
+  background-color: red !important;
+  color: white !important;
+  border: 2px solid darkred;
 }
 
-/* Disabled Cell Styling (optional, for pre-filled or locked cells) */
+/* Вимкнені (заблоковані) клітинки */
 td.disabled {
-  background-color: #ccc; /* Light gray for disabled cells */
+  background-color: #ccc;
   color: gray;
   cursor: not-allowed;
 }
 
-/* Button Styling */
+/* Стилі кнопок */
 button {
   margin: 5px;
   padding: 10px 15px;
-  background-color: #007bff; /* Blue by default */
-  color: white; /* White text */
+  background-color: #007bff; /* Синій за замовчуванням */
+  color: white;
   border: none;
   border-radius: 4px;
   font-size: 18px;
@@ -64,16 +75,16 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3; /* Темніший синій при наведенні */
 }
 
 button:disabled {
-  background-color: #ccc; /* Gray for disabled buttons */
-  color: #666; /* Darker gray text for disabled buttons */
+  background-color: #ccc;
+  color: #666;
   cursor: not-allowed;
 }
 
-/* Congratulatory Message Styling */
+/* Стиль привітального повідомлення */
 h1 {
   text-align: center;
   color: green;
@@ -81,21 +92,27 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Regenerate Button Styling */
+/* Кнопка для перегенерації */
 button#regenerate {
   display: block;
-  margin: 20px auto; /* Center align */
-  background-color: #28a745; /* Green for regenerate */
+  margin: 20px auto;
+  background-color: #28a745; /* Зелений для перегенерації */
 }
 
 button#regenerate:hover {
   background-color: #218838;
 }
+
 .button-container {
-  text-align: center; /* Центрує кнопки */
-  margin-top: 20px; /* Відступ зверху */
+  text-align: center;
+  margin-top: 20px;
 }
 
 .button-container button {
-  margin: 5px; /* Відступи між кнопками */
+  margin: 5px;
+}
+
+td.selected-cell {
+  border: 2px solid blue;
+  background-color: lightblue !important;
 }
