@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.game</groupId>
     <artifactId>sudoku</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>application</version>
     <name>sudoku</name>
     <description>sudoku</description>
     <url/>
