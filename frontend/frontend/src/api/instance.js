@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    // Автоматично підлаштовує базову адресу відповідно до хоста бекенду
-    baseURL: "/api",
+    baseURL: process.env.REACT_APP_API_URL || "/api",
 });
 
 export default api;
